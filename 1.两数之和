@@ -20,3 +20,7 @@ int* twoSum(int* nums, int numsSize, int target)
 }
 
 
+/*
+这道题使用了最暴力的解法，直接从数组中从头两个两个挨个遍历两数之和，将计算结果和目标数字进行比较。
+*/
+
