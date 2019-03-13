@@ -1,0 +1,50 @@
+/*
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。
+
+示例 1:
+
+输入: ["flower","flow","flight"]
+输出: "fl"
+示例 2:
+
+输入: ["dog","racecar","car"]
+输出: ""
+解释: 输入不存在公共前缀。
+说明:
+
+所有输入只包含小写字母 a-z 。
+*/
+
+char* longestCommonPrefix(char** strs, int strsSize) 
+{
+   if(strsSize == 0) 
+   {
+        char* result = (char*)calloc(1, sizeof(char));
+        return result;
+    }
+    int index = 0, i = 0;
+    char flag = strs[0][index];
+    while(flag)
+    {
+        for(i = 1; i < strsSize; i++)
+        {
+            if(strs[i][index] != flag)
+                break;//对比出现对应位上的字符不相同时，直接退出字符串索引
+        }
+        if(i < strsSize)
+            break;//如果上步循环退出了，则应该直接退出while循环，防止对flag自加后进行后续字符串的比较
+            //如果是正常循环结束的话，则i应该等于strsSize，不退出大循环，将flag自加后继续进行后续字符的比较
+        flag = strs[0][++index];
+    }
+    strs[0][index] = '\0';
+    return strs[0];
+}
+
+/*
+二维字符串数组中，以第一个字符串为靶点，以此向后面的字符串挨个字符进行比较。
+首先进行特殊情况处理，如果二维字符串数组为空，则直接返回一个空数组。
+非特殊情况下，将二维数组中的第一个字符串的第一个字符与其余字符串的第一个字符进行比较，如果出现不同，立即跳出循环，
+否则进行后续位的字符比较，直到出现不同为止。
+*/
