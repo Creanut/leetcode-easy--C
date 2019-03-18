@@ -16,7 +16,7 @@
  */
 struct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2) 
 {
-    //递归的终止条件
+    //递归的基线情况
     if(l2 == NULL)
         return l1;
     else if(l1 == NULL)
@@ -24,10 +24,11 @@ struct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2)
     
     struct ListNode* pMerged = NULL;
     
+    //递归的一般情况
     if(l1->val < l2->val)
     {
-        pMerged = l1;
-        pMerged->next = mergeTwoLists(l1->next,l2);
+        pMerged = l1;//第一步：选取较小的节点作为队列的第一个节点
+        pMerged->next = mergeTwoLists(l1->next,l2);//第二步：队列前进，继续比较
     }
     else
     {
