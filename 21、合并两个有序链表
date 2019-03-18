@@ -1,0 +1,52 @@
+/*
+将两个有序链表合并为一个新的有序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+示例：
+
+输入：1->2->4, 1->3->4
+输出：1->1->2->3->4->4
+*/
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2) 
+{
+    //递归的终止条件
+    if(l2 == NULL)
+        return l1;
+    else if(l1 == NULL)
+        return l2;
+    
+    struct ListNode* pMerged = NULL;
+    
+    if(l1->val < l2->val)
+    {
+        pMerged = l1;
+        pMerged->next = mergeTwoLists(l1->next,l2);
+    }
+    else
+    {
+        pMerged = l2;
+        pMerged->next = mergeTwoLists(l1,l2->next);
+    }
+    
+    return pMerged;    
+}
+
+/*
+采用递归的方式最简单，类似于给两队分别按照身高排列的小朋友按照身高重新进行排队：
+递归结束的条件：
+如果有一队为空，说明
+1、只有一队小朋友
+2、排队已经完成，返回拍好的队列
+
+递归调用的方式：
+先比较两个队列中的第一位小朋友的身高，取最低的那个作为新队列的队头。
+新队列的下一个人就是剩余队列的相同方式的比较结果。
+递归调用，直到最先有一列队伍排完没有人了，那就返回新队列的结果。
+*/
