@@ -1,0 +1,30 @@
+char* countAndSay(int n) 
+{
+   char* pre = (char*)calloc(5000, sizeof(char));
+   char* now = (char*)calloc(5000, sizeof(char));
+   pre[0] = '1';
+   if(n == 1) 
+       return pre;
+   
+   int i = 1, j = 0, count = 0, index = 0, len = strlen(pre);
+   for(i = 1; i < n; i++)
+   {
+       count = 1;
+       index = 0;
+       for(j = 0; j < len; j++) 
+       {
+           if(pre[j] == pre[j + 1])
+               count++;
+           else 
+           {
+               now[index++] = '0' + count;
+               now[index++] = pre[j];
+               count = 1;   
+           }
+       }
+       now[index] = '\0';
+       len = index;
+       memcpy(pre, now, index * sizeof(char));
+   }
+   return now;
+}
