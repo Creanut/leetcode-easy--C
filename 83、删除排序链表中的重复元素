@@ -31,3 +31,16 @@ struct ListNode* deleteDuplicates(struct ListNode* head)
     
     return head;
 }
+
+/*
+本题的思路很清晰，在有序链表中删除重复元素，则重复的元素在原数列中肯定是挨在一起的。
+所以在删除元素的时候只需要从头到尾遍历链表中的数据，比较当前节点的值和下一个节点的值是否相等即可，
+如果相等，则直接越过当前节点，指针指向下一节点即可。
+在遍历迭代的过程可以使用递归函数来实现，基线条件是：
+head == NULL || head->next == NULL
+状态转移条件是：
+if(head->val == head->next->val)
+       head = head->next;
+else
+       head = head;
+*/
