@@ -1,0 +1,67 @@
+/*
+给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+
+如果你最多只允许完成一笔交易（即买入和卖出一支股票），设计一个算法来计算你所能获取的最大利润。
+
+注意你不能在买入股票前卖出股票。
+
+示例 1:
+
+输入: [7,1,5,3,6,4]
+输出: 5
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格。
+示例 2:
+
+输入: [7,6,4,3,1]
+输出: 0
+解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+*/
+
+//朴素解法：枚举出数组中任意两个元素的差值，寻找最大差值。
+int maxProfit(int* prices, int pricesSize) 
+{
+    int d_val;
+    int max =INT_MIN;
+    
+    for(int i = 0; i < pricesSize; i++)
+    {
+        d_val = 0;
+        for(int j = i; j < pricesSize; j++)
+        {
+            d_val = prices[j] - prices[i];
+            if(d_val > max)
+                max = d_val;
+        }
+    }
+    if(max <= 0)
+        return 0;
+    else
+        return max;
+}
+
+//动态规划解法：前i天的最大收益 = max(前i-1天的最大收益，第i天的价格-前i-1天中的最低价格);
+int maxProfit(int* prices, int pricesSize) 
+{
+    int d_val = 0;
+    int min_price = prices[0];
+    
+    if(pricesSize <= 1)
+        return 0;
+    
+    for(int i = 1; i < pricesSize; i++)
+    {
+        d_val = d_val > (prices[i] - min_price) ? d_val : (prices[i] - min_price);
+        min_price = (min_price < prices[i]) ? min_price : prices[i];
+    }
+    return (d_val > 0) ? d_val : 0;
+}
+
+/*
+这个题目和之前计算最大子序和的求解方法非常像。
+首先最朴素的想法就是枚举出数组中所有数据之间的差值，然后寻求最大值，
+这种方法使用两层循环嵌套，分别作为慢指针和快指针进行差值计算即可，但是在
+提交后可能会出现运行超时，时间复杂度是O(n^2).
+
+使用动态规划的思路是
+*/
