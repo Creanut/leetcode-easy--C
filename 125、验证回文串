@@ -1,0 +1,85 @@
+/*
+给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+
+说明：本题中，我们将空字符串定义为有效的回文串。
+
+示例 1:
+
+输入: "A man, a plan, a canal: Panama"
+输出: true
+示例 2:
+
+输入: "race a car"
+输出: false
+*/
+
+bool isPalindrome(char* s) 
+{
+    int s_len = strlen(s);
+    int cnt = 0;
+    int i = 0;
+    int space_num = 0;
+    
+    while(s[i] != '\0')
+    {
+        if('0' <= s[i] && s[i] <= '9')
+            cnt++;
+        else if('a' <= s[i] && s[i] <= 'z')
+            cnt++;
+        else if('A' <= s[i] && s[i] <= 'Z')
+            cnt++;
+        else if(s[i] == ' ')
+            space_num++;
+        i++;
+    }
+    
+    if(space_num == s_len)
+        return true;
+    if(cnt == 0)
+        return true;
+    
+    char* pure_s = (char*)malloc(cnt * sizeof(char));
+    
+    i = 0;
+    int tmp = 0;
+    while(s[i] != '\0' && tmp < cnt)
+    {
+        if('0' <= s[i] && s[i] <= '9')
+        {
+            pure_s[tmp] = s[i];
+            tmp++;
+        }
+        else if('a' <= s[i] && s[i] <= 'z')
+        {
+            pure_s[tmp] = s[i] - 'a' + 'A';
+            tmp++;
+        }
+        else if('A' <= s[i] && s[i] <= 'Z')
+        {
+            pure_s[tmp] = s[i];
+            tmp++;
+        }
+
+        i++;
+    }
+    
+    int j = 0;
+    for(; j < cnt/2; j++)
+    {
+        if(pure_s[j] != pure_s[cnt-1-j])
+            return false;
+    }
+    return true;
+}
+
+/*
+本题的思路比较朴素
+首先对给定的字符串进行规则化处理，把字符间的空格、非法字符串去掉，并将小写字母
+都转换为大写字母，重新构建一个新的字符串数组。
+在这个过程中要注意特殊情况处理：
+1、如果字符串中全是空格，定义其为回文串，
+此时在遍历时记录空格的个数space_num，如果遍历结束后space_num == s_len,
+说明字符串中全是空格，返回true；
+2、如果字符串中全是非法字符，则相当于该字符串是空字符串，
+定义其为回文串，此时在遍历后cnt == 0，返回true.
+*/
