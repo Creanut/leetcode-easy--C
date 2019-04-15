@@ -80,3 +80,10 @@ int* intersection(int* nums1, int nums1Size, int* nums2, int nums2Size, int* ret
     return result;
 }
 
+
+/*
+对集合A和集合B进行排序（升序），设置两个指针p和q，同时指向集合A和集合B的最小值，
+不相等的话移动*p和*q中较小值的指针，
+相等的话同时移动指针p和q，并且记下相等的数字，为交集的元素之一，
+依次操作，直到其中一个集合没有元素可比较为止。
+*/
