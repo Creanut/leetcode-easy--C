@@ -1,0 +1,39 @@
+/*
+给定一个赎金信 (ransom) 字符串和一个杂志(magazine)字符串，判断第一个字符串ransom能不能由第二个字符串magazines里面的字符构成。如果可以构成，返回 true ；否则返回 false。
+
+(题目说明：为了不暴露赎金信字迹，要从杂志上搜索各个需要的字母，组成单词来表达意思。)
+
+注意：
+
+你可以假设两个字符串均只含有小写字母。
+
+canConstruct("a", "b") -> false
+canConstruct("aa", "ab") -> false
+canConstruct("aa", "aab") -> true
+*/
+
+bool canConstruct(char* ransomNote, char* magazine) 
+{
+    
+    int a[26] = {0},b[26] = {0};
+    for(int i = 0;i < strlen(ransomNote);i++)
+        a[ransomNote[i] - 'a']++;
+    for(int i = 0;i < strlen(magazine);i++)
+        b[magazine[i] - 'a']++;
+    for(int i = 0;i < 26;i++)
+        if(a[i] > b[i])
+            return false;
+    return true;
+}
+
+/*
+第一步：
+把给的赎金信里的字母依次存进HashMap中，其中key-value分别为字母的值和出现的次数，
+比如如果赎金信是aa的话，这个HashMap里就存入{a->2}。
+第二步：
+把给的杂志里的字母依次存进HashMap中，其中key-value分别为字母的值和出现的次数，
+比如如果杂志是aab的话，这个HashMap里就存入{a->2,b->1}。
+第三步：
+遍历这两个hashmap，如果赎金信对应的hashmap的某字母的个数比杂志中对应字母的个数
+还要多，那就说明杂志中的字符不足以覆盖赎金信中的字符，解码失败。
+*/
