@@ -1,0 +1,80 @@
+/*
+给定两个字符串 s 和 t，它们只包含小写字母。
+
+字符串 t 由字符串 s 随机重排，然后在随机位置添加一个字母。
+
+请找出在 t 中被添加的字母。
+
+ 
+
+示例:
+
+输入：
+s = "abcd"
+t = "abcde"
+
+输出：
+e
+
+解释：
+'e' 是那个被添加的字母。
+*/
+
+char findTheDifference(char* s, char* t) 
+{
+    int s_len = strlen(s);
+    int t_len = strlen(t);
+    int s_sum = 0;
+    int t_sum = 0;
+
+    for(int i = 0; i < s_len; i++)
+        s_sum = s_sum + s[i];
+    
+    for(int j = 0; j < t_len; j++)
+        t_sum = t_sum + t[j];
+    
+    return (char)(t_sum - s_sum);
+}
+/*
+s中的字符所对应的int值相加-t中的字符所对应的int值相加，
+得到的就是多出来的那个字符的int值，然后转换为char输出即可。
+*/
+
+char findTheDifference(char* s, char* t) 
+{
+    int c[26];
+    for(int i = 0; i <26; i++)c[i] = 0;
+    for(int i = 0; s[i] != '\0'; i++)
+        c[s[i] - 97]++;
+    for(int i = 0; t[i] != '\0'; i++)
+    {
+        c[t[i] - 97]--;
+        if(c[t[i] - 97] == -1) return t[i];
+    }
+    return '\0';
+}
+/*
+一个哈希表解决：
+构建一个哈希表c，然后对s中的字符进行遍历，给哈希表赋值，
+其中key为字符对应的字母表位置（0-25）,value为该字母在
+字符串s中的个数。
+
+然后遍历t数组，对哈希表进行重新赋值，并判断对应字符的个数，
+如果出现某个字符的值为-1，那就说明s中没有该字符（对应的value值为0），
+而t中出现了，所以对应相减时出现了-1，然后返回其对应的字符。
+*/
+
+char findTheDifference(char* s, char* t) 
+{
+    char res = 0;
+    int i = 0;
+    while(s[i] && t[i]) 
+    {
+        res ^= s[i]^t[i];
+        i++;
+    }
+    return res^s[i]^t[i];
+}
+/*
+字符与自己的异或结果为0，如果两个字符串异或出现了不同的字符，返回即可。
+*/
