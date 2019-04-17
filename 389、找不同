@@ -78,3 +78,33 @@ char findTheDifference(char* s, char* t)
 /*
 字符与自己的异或结果为0，如果两个字符串异或出现了不同的字符，返回即可。
 */
+
+char findTheDifference(char* s, char* t)
+{
+    int slen = strlen(s);
+    int tlen = strlen(t);
+    int sfreq[26] = {0};
+    int tfreq[26] = {0};
+    char ret;
+
+    for(int i = 0; i < slen; i++ )
+    {
+        sfreq[s[i]-'a']++;
+    }
+    for(int i = 0; i < tlen; i++ )
+    {
+        tfreq[t[i]-'a']++;
+    }
+    for( int i = 0; i < 26; i++ )
+    {
+        if( sfreq[i] != tfreq[i] )
+        {
+            ret = i +'a';
+            break;
+        }
+    }
+    return ret;
+}
+/*
+两个哈希表解决，思路和一个哈希表解决的思路一致，只不过实现起来更好理解一些。
+*/
