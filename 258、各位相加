@@ -1,0 +1,64 @@
+/*
+给定一个非负整数 num，反复将各个位上的数字相加，直到结果为一位数。
+
+示例:
+
+输入: 38
+输出: 2 
+解释: 各位相加的过程为：3 + 8 = 11, 1 + 1 = 2。 由于 2 是一位数，所以返回 2。
+进阶:
+你可以不使用循环或者递归，且在 O(1) 时间复杂度内解决这个问题吗？
+*/
+
+//循环解法
+int addDigits(int num) 
+{
+    while(num >= 10)
+    {
+        int sum = 0;
+        while(num != 0)
+        {        
+            sum = sum + num % 10;
+            num = num / 10;
+        } 
+        num = sum;
+    }
+    return num;
+}
+/*
+思路非常明了，内层循环不断分离出每一位数字，并进行数字的累加，
+外层循环将累加后的数字作为新的分离对象进行相同的运算，直到累加
+结果为一位数。
+*/
+
+//递归解法
+int addDigits(int num) 
+{
+    int tmp = num;    
+    int res = 0;
+    if(num <= 9)
+       return num;
+    while(tmp!=0)
+    {
+        res += tmp%10;
+        tmp /= 10;
+    }
+    return addDigits(res);    
+}
+/*
+思路和上面的循环解法是一样的，只是把外层循环换成了递归调用。
+*/
+
+//神仙解法
+int addDigits(int num) 
+{
+    if (num == 0)
+        return num;
+    return 1+(num-1)%9;
+}
+/*
+数字根的数学公式解：
+（num-1）％9 + 1
+关于数字根的详细讲解见：
+https://www.cnblogs.com/eniac12/p/4780661.html
+*/
