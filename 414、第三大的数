@@ -1,0 +1,109 @@
+/*
+给定一个非空数组，返回此数组中第三大的数。如果不存在，则返回数组中最大的数。要求算法时间复杂度必须是O(n)。
+
+示例 1:
+
+输入: [3, 2, 1]
+
+输出: 1
+
+解释: 第三大的数是 1.
+示例 2:
+
+输入: [1, 2]
+
+输出: 2
+
+解释: 第三大的数不存在, 所以返回最大的数 2 .
+示例 3:
+
+输入: [2, 2, 3, 1]
+
+输出: 1
+
+解释: 注意，要求返回第三大的数，是指第三大且唯一出现的数。
+存在两个值为2的数，它们都排第二。
+*/
+
+int thirdMax(int* nums, int numsSize) 
+{
+    if(numsSize == 1)
+        return nums[0];
+    if(numsSize == 2)
+        return (nums[0] > nums[1]) ? nums[0] : nums[1];
+    
+    long max = LONG_MIN;
+    long mid = LONG_MIN;
+    long min = LONG_MIN;
+    int flag = 0;
+    
+    for(int i = 0; i < numsSize; i++)
+    {
+        if(nums[i] != max && nums[i] != mid && nums[i] != min)
+        {
+            if(min < nums[i])
+            {
+                if(mid < nums[i])
+                {
+                    if(max < nums[i])
+                    {
+                        flag++;
+                        min = mid;
+                        mid = max;
+                        max = nums[i];
+                    }
+                    else
+                    {
+                        flag++;
+                        min = mid;
+                        mid = nums[i];
+                    }
+                }
+                else
+                {
+                    flag++;
+                    min = nums[i];
+                }
+            }
+        }
+    }
+    return flag >= 3 ? min : max;
+}
+
+//该结果的简化版本
+int thirdMax(int* nums, int numsSize) 
+{
+    long max = LONG_MIN;
+    long max2 = LONG_MIN;
+    long max3 = LONG_MIN;    
+    int i = 0;
+    for(i=0; i<numsSize; i++)
+    {
+        if(nums[i]>max)
+        {
+            max3 = max2;
+            max2 = max;
+            max = nums[i];            
+        }
+        else if(nums[i] > max2 && nums[i] < max)
+        {
+            max3 = max2;
+            max2 = nums[i];
+        }
+        else if(nums[i] > max3 && nums[i] < max2 && nums[i] < max)
+        {
+            max3 = nums[i];
+        }
+    }
+    return (max3!=LONG_MIN)?max3:max;
+}
+
+/*
+在遍历数组的过程中只关注当前遍历点之前的数字中的前三大数字：max max2 max3
+1、如果当前数字nums[i]大于max，则去掉max3
+2、如果当前数字只大于max2，小于max，则去掉max3
+3、如果当前数字只大于max3，小于max2和max，则取代max3
+
+最后遍历所有元素后判断max3是否还等于初始值，如果是，则说明此数组中没有第三大
+的数字，最后只返回max即可，否则返回max3.
+*/
