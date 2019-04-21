@@ -1,0 +1,67 @@
+/*
+给定两个字符串形式的非负整数 num1 和num2 ，计算它们的和。
+
+注意：
+
+num1 和num2 的长度都小于 5100.
+num1 和num2 都只包含数字 0-9.
+num1 和num2 都不包含任何前导零。
+你不能使用任何內建 BigInteger 库， 也不能直接将输入的字符串转换为整数形式。
+*/
+
+char* addStrings(char* num1, char* num2) 
+{
+    int num1_len = strlen(num1);
+    int num2_len = strlen(num2);
+    int max_len = num1_len > num2_len ? num1_len : num2_len;
+    char* result = (char*)malloc(sizeof(char) * (max_len + 2));
+    for(int index = 0 ;index < max_len + 1; index++)
+    {
+        result[index] = '0';
+    }
+    int carry = 0;
+    int i = num1_len - 1;
+    int j = num2_len - 1;
+    result[max_len + 1] = '\0';
+    int tmp;
+    for(int index = max_len; index >= 0; index--, i--, j--)
+    {
+        if(i >= 0 && j >= 0)
+        {
+            tmp = num1[i] - '0' + num2[j] - '0' + carry;
+        }else if(i >= 0)
+        {
+            tmp = num1[i] - '0' + carry;
+        }else if(j >= 0)
+        {
+            tmp = num2[j] - '0' + carry;
+        }
+        else
+        {
+            break;
+        }
+        result[index] = tmp % 10 + '0';
+        carry = tmp / 10;            
+    }
+    if(carry > 0)
+        result[0] = carry + '0';
+    else
+        *result++;
+    return result;
+}
+
+/*
+解题思路：按位做加法，重构新数组
+
+原字符串按位做加法，重构一个新的字符串数组按位存储结果即可。
+重构的字符串比原字符串中最长的那个多2，多的2位中，其中一位作为字符串结束符‘\0’，
+另一位作为字符串首位当作进位。
+
+循环体中的情况：
+如果num1和num2均没有加完，正常累加计算即可；
+如果num2加完了，num1没有加完，只对num1的结果做累加；
+如果num1加完了，num2没有加完，只对num2的结果做累加；
+
+如果最终没有进位，预留出的那个进位字符怎么办呢？
+直接把result字符指针移到后面的第二位上即可，即把预留的那一位跳过即可。
+*/
