@@ -1,0 +1,44 @@
+/*
+给定一个二叉树，找出其最大深度。
+
+二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+
+说明: 叶子节点是指没有子节点的节点。
+
+示例：
+给定二叉树 [3,9,20,null,null,15,7]，
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回它的最大深度 3 。
+*/
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+int maxDepth(struct TreeNode* root) 
+{
+    if(root == NULL)
+        return 0;
+    else
+    {
+        int left = maxDepth(root -> left);
+        int right = maxDepth(root -> right);
+        return 1 + (left > right ? left : right);
+    }
+}
+
+/*
+本题很自然的想法就是使用递归，
+首先是不断计算左子树的深度，
+然后不断计算右子树的深度，
+然后对比返回深度较大的值，其中＋1是根节点。
+*/
