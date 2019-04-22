@@ -1,0 +1,82 @@
+/*
+写一个程序，输出从 1 到 n 数字的字符串表示。
+
+1. 如果 n 是3的倍数，输出“Fizz”；
+
+2. 如果 n 是5的倍数，输出“Buzz”；
+
+3.如果 n 同时是3和5的倍数，输出 “FizzBuzz”。
+
+示例：
+
+n = 15,
+
+返回:
+[
+    "1",
+    "2",
+    "Fizz",
+    "4",
+    "Buzz",
+    "Fizz",
+    "7",
+    "8",
+    "Fizz",
+    "Buzz",
+    "11",
+    "Fizz",
+    "13",
+    "14",
+    "FizzBuzz"
+]
+*/
+
+/**
+ * Return an array of size *returnSize.
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+char** fizzBuzz(int n, int* returnSize) 
+{
+    char** result = (char**)malloc(n * sizeof(char*));
+    *returnSize = 0;
+    
+    while(*returnSize < n)
+    {  
+        result[*returnSize] = (char*)malloc(9 * sizeof(char));
+        result[*returnSize][0] = '\0';
+        (*returnSize)++;    
+    }
+    
+    for(int i = 1; i <= n; i++)
+    {
+        if(i % 3 == 0 && i % 5 != 0)
+            strcat(result[i-1],"Fizz");
+        else if(i % 3 != 0 && i % 5 == 0)
+            strcat(result[i-1],"Buzz");
+        else if(i % 3 == 0 && i % 5 == 0)
+            strcat(result[i-1],"FizzBuzz");
+        else 
+            sprintf(result[i-1],"%d",i);
+    }
+    
+    return result;
+}
+
+/*
+由于题目要求返回的是一个二维字符串数组，所以这个题目的关键就是构建二维字符串，
+并且熟悉相应的字符串操作函数。
+
+二维字符串数组可以用二级指针来赋值，其中一级指针指向数组的行，二级指针指向数组的列，
+因此，对于构建一个n行，每行最多有m个字符的字符串数组，其初始化代码一般为：
+char** result = (char**)malloc(n * sizeof(char*));//构建n行
+/*构建m列，并在m列中的第一列赋值字符串结束符‘\0’，以供字符串拼接*/
+while(*returnSize < n)
+{  
+    result[*returnSize] = (char*)malloc(m * sizeof(char));
+    result[*returnSize][0] = '\0';
+    (*returnSize)++;    
+}
+
+注意在字符串赋值中，不能直接使用赋值符进行赋值，应使用字符串拼接函数strcat或者
+字符串拷贝函数strcpy进行赋值操作。
+*/
