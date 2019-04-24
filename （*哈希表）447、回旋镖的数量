@@ -1,0 +1,65 @@
+/*
+给定平面上 n 对不同的点，“回旋镖” 是由点表示的元组 (i, j, k) ，其中 i 和 j 之间的距离和 i 和 k 之间的距离相等（需要考虑元组的顺序）。
+
+找到所有回旋镖的数量。你可以假设 n 最大为 500，所有点的坐标在闭区间 [-10000, 10000] 中。
+
+示例:
+
+输入:
+[[0,0],[1,0],[2,0]]
+
+输出:
+2
+
+解释:
+两个回旋镖为 [[1,0],[0,0],[2,0]] 和 [[1,0],[2,0],[0,0]]
+*/
+
+int numberOfBoomerangs(int** points, int pointsRowSize, int pointsColSize) 
+{
+    struct hash_distance
+    {
+        int distance;
+        int cnt;
+        UT_hash_handle hh;
+    };
+    
+    int result = 0;
+    
+    for(int i = 0; i < pointsRowSize; i++)
+    {
+        struct hash_distance* hash_table = NULL;
+        
+        for(int j = 0; j < pointsRowSize; j++)
+        {
+            if(i != j)
+            {
+                struct hash_distance* tmp_hash;
+                int distance = pow(points[i][0] - points[j][0],2) + pow(points[i][1] - points[j][1],2);
+                HASH_FIND_INT(hash_table,&distance,tmp_hash);
+                
+                if(tmp_hash)
+                    tmp_hash->cnt++;
+                else
+                {
+                    tmp_hash = malloc(sizeof(struct hash_distance));
+                    tmp_hash->distance = distance;
+                    tmp_hash->cnt = 1;
+                    HASH_ADD_INT(hash_table,distance,tmp_hash);
+                }
+            }
+        }
+        
+        for(struct hash_distance* s = hash_table; s != NULL; s = s->hh.next)
+            result += s->cnt * (s->cnt - 1);
+    }
+
+    return result;
+}
+
+/*
+本题的核心思想就是计算所给的坐标点之间的欧式距离，并将欧式距离和该距离对应的坐标点的对数
+映射进哈希表。比如在所给的坐标点中，欧式距离为10的点有3对，则在哈希表中，distance（即key值）和
+cnt（即value值）分别就是10和3。如果value值大于1，则说明其可以构成回旋镖。
+哈希表构建完成后，遍历哈希表，计算组合数即可，即C(N,2) = N * (N-1)。
+*/
