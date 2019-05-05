@@ -1,0 +1,68 @@
+/*
+给定只含 "I"（增大）或 "D"（减小）的字符串 S ，令 N = S.length。
+
+返回 [0, 1, ..., N] 的任意排列 A 使得对于所有 i = 0, ..., N-1，都有：
+
+如果 S[i] == "I"，那么 A[i] < A[i+1]
+如果 S[i] == "D"，那么 A[i] > A[i+1]
+ 
+
+示例 1：
+
+输出："IDID"
+输出：[0,4,1,3,2]
+示例 2：
+
+输出："III"
+输出：[0,1,2,3]
+示例 3：
+
+输出："DDI"
+输出：[3,2,0,1]
+ 
+
+提示：
+
+1 <= S.length <= 1000
+S 只包含字符 "I" 或 "D"。
+*/
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* diStringMatch(char * S, int* returnSize)
+{
+    *returnSize = strlen(S) + 1;
+    int* result = (int*)malloc((*returnSize) * sizeof(int));
+    int increase = 0;
+    int decrease = *returnSize - 1;
+    
+    for(int i = 0; i < *returnSize; i++)
+    {
+        if(S[i] == 'I')
+            result[i] = increase++;
+        else
+            result[i] = decrease--;
+    }
+    
+    return result;
+}
+
+/*
+这道题主要是根据提示观察归纳数字的排列规律。
+在返回的数组中，其与原字符串数组的对应关系为：
+
+ I D I D
+0 4 1 3 2
+
+ I I I
+0 1 2 3
+
+ D D I
+3 2 0 1
+
+观察规律可以得出，每一个I的前一个位置都是从0开始逐渐加1得到的；
+每个D的前一个位置都是从最大值开始逐渐减1得到的；
+最后一个位置根据最后一个字母的增减情况进行计算（如果是I继续自增，如果是D继续自减）。
+*/
+
