@@ -1,0 +1,62 @@
+/*
+自除数 是指可以被它包含的每一位数除尽的数。
+
+例如，128 是一个自除数，因为 128 % 1 == 0，128 % 2 == 0，128 % 8 == 0。
+
+还有，自除数不允许包含 0 。
+
+给定上边界和下边界数字，输出一个列表，列表的元素是边界（含边界）内所有的自除数。
+
+示例 1：
+
+输入： 
+上边界left = 1, 下边界right = 22
+输出： [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 15, 22]
+注意：
+
+每个输入参数的边界满足 1 <= left <= right <= 10000。
+*/
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* selfDividingNumbers(int left, int right, int* returnSize)
+{
+    int number_size = right - left + 1;
+    int bit = 0;
+    int index = 0;
+    int* temp = (int*)malloc(number_size * sizeof(int));
+    
+    for(int i = left; i <= right; i++)
+    {
+        int num = i;
+        while(num != 0)
+        {
+            bit = num % 10;
+            if(bit == 0 || i % bit != 0)
+                break;   
+            num = num / 10;
+        }
+        if(num == 0)
+            temp[index++] = i;
+    }
+    
+    *returnSize = index;
+    // int* result = (int*)malloc(index * sizeof(int));
+    // for(int i = 0; i < index; i++)
+    //     result[i] = temp[i];   
+    return temp;
+}
+
+/*
+这道题思路很清晰，很暴力地把数字的每一位分离出来，然后按照题目的定义判断
+每一位是否为0（有0必不是自除数）或者某一位不能被自己整除（不符合自除数定义）就可以了，
+满足判断条件的数字直接存入预分配的数组空间当中。
+这道题的一个细节要注意，就是函数形参里的*returnSize，这是一个返回数组的长度指针型变量，
+因为有了这个变量，所以最后在return的时候可以直接返回数组名称（malloc所分配的地址指针），
+而不用指明指针所指的长度。（之前我一直天真地以为这个参数是方便主函数里多次调用着方便来着。。。*=*||）
+C语言中的return返回值由于只能返回一个变量，所以如果返回了数组的指针，就不能再返回数组的长度了，
+解决这个问题有两个方法，其一是构建结构体，其中一个字段定义为返回数组的长度，
+其二是直接在函数形参中传入要返回数组的长度指针，在函数中对该指针指向的空间赋值。
+（感谢蟹老板指点迷津~~~）
+*/
