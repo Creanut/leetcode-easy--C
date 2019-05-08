@@ -1,0 +1,62 @@
+/*
+给定一个单词列表，只返回可以使用在键盘同一行的字母打印出来的单词。键盘如下图所示。
+（普通键盘图）
+
+示例：
+
+输入: ["Hello", "Alaska", "Dad", "Peace"]
+输出: ["Alaska", "Dad"]
+ 
+
+注意：
+
+你可以重复使用键盘上同一字符。
+你可以假设输入的字符串将只包含字母。
+*/
+
+char** findWords(char** words, int wordsSize, int* returnSize) 
+{
+    int line[26] = {1, 2, 2, 1, 0, 1, 1, 1, 0, 1, 1, 1, 2, 2, 0, 0, 0, 0, 1, 0, 0, 2, 0, 2, 0, 2};
+    int flag = 0;
+    int i = 0,j = 0;
+    int word_line = 0;
+    *returnSize = 0;
+    char** result = (char**)malloc(wordsSize * sizeof(char*));
+    
+    for(i = 0; i < wordsSize; i++)
+    {        
+        //新单词循环开始，单词字母下标j置位，符合筛选标准的flag标志位置位，计算单词首字母所在的行数。
+        j = 0;
+        flag = 0;
+        int initial_line = line[tolower(words[i][0]) - 'a'];
+        
+        //逐个遍历单词中的字母，判断每个字母是否和首字母所在的行数相同，如果出现不同，则表明该单词不符合筛选标准，
+        //筛选标准标志位flag置1，跳出单词字母的遍历循环。
+        while(words[i][j] != '\0')
+        {
+            char tmp = tolower(words[i][j]);
+            word_line = line[tmp - 'a'];
+            if(word_line != initial_line)
+            {
+                flag = 1;
+                break;
+            }
+            j++;
+        }
+        
+        //如果符合筛选标准（flag=0），则将该单词存入结果数组中，有效单词计数器returnSize自增。
+        if(flag == 0)
+        {
+            result[*returnSize] = words[i];
+            (*returnSize)++;
+        }
+    }
+        
+    return result;
+}
+
+/*
+本题的关键是构建一个26个字母的映射表，将每一个字母映射为其在键盘中排列的行数。
+下面在进行单词筛选的时候，只需要判断单词中的每个字母所在的行数是否和单词的首字母所在的行数是否相同即可。
+注意使用tolower函数将所有的字母都转化为小写字母后再判断，可简化判断条件的语句。
+*/
