@@ -22,40 +22,49 @@
 A[i][j] 是小写字母
 */
 
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
 int min(int a,int b)
 {
     if(a>b) return b;
     return a;
 }
-/**
- * Note: The returned array must be malloced, assume caller calls free().
- */
-char **commonChars(char **A, int ASize, int *returnSize) {
-    char count[26];
-    memset(count, 127, 26);//将之后26个设为127
-    char now[26] = {0}, *p, **result = malloc(sizeof(char *) * 1000);
-    int i, j;
-    for (i = 0; i < ASize; i++) {
-        p = A[i];
-        while (*p != '\0') {
-            now[*p - 'a']++;
-            p = p + 1; 
-        }       
-        for (j = 0; j < 26; j++) {
-            count[j] = min(count[j], now[j]);
-            now[j] = 0; //每次将now还原。
-        }       
-    }       
+
+char **commonChars(char **A, int ASize, int *returnSize)
+{
+    char cnt[26];
+    memset(cnt,127,26);
+    char current[26] = {0};
+    char** result = (char**)malloc(sizeof(char*) * 1000);
+    
+    for(int i = 0; i < ASize; i++)
+    {
+        char* p = A[i];
+        while(*p != '\0')
+        {
+            current[*p-'a']++;
+            p++;
+        }
+        for(int j = 0; j < 26; j++)
+        {
+            cnt[j] = min(cnt[j],current[j]);
+            current[j] = 0;
+        }
+    }
+    
     *returnSize = 0;
-    //重复字母也要打印
-    for (i = 0; i < 26; i++) {
-        for (j = 0; j < count[i]; j++) {
+    
+    for(int i = 0; i < 26; i++)
+    {
+        for(int j = 0; j < cnt[i]; j++)
+        {
             result[*returnSize] = malloc(sizeof(char) * 2);
             result[*returnSize][0] = 'a' + i;
             result[*returnSize][1] = '\0';
-            *returnSize += 1;
-        }       
-    }       
-
+            *returnSize = *returnSize + 1;
+        }
+    }
+    
     return result;
 }
