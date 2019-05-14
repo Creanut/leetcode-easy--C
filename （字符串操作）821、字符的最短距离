@@ -1,0 +1,90 @@
+/*
+给定一个字符串 S 和一个字符 C。返回一个代表字符串 S 中每个字符到字符串 S 中的字符 C 的最短距离的数组。
+
+示例 1:
+
+输入: S = "loveleetcode", C = 'e'
+输出: [3, 2, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0]
+说明:
+
+字符串 S 的长度范围为 [1, 10000]。
+C 是一个单字符，且保证是字符串 S 里的字符。
+S 和 C 中的所有字母均为小写字母。
+*/
+
+int* shortestToChar(char * S, char C, int* returnSize)
+{
+    int S_len = strlen(S);
+    int C_cnt = 0;
+    int place_index = 0;
+    //确定S中字符C出现的位置，并记录到C_place中
+    for(int i = 0; i < S_len; i++)
+    {
+        if(S[i] == C)
+            C_cnt = C_cnt + 1;
+    }
+    int* C_place = (int*)calloc(C_cnt,sizeof(int));
+    for(int i = 0; i < S_len; i++)
+    {
+        if(S[i] == C)
+            C_place[place_index++] = i;
+    }
+    int* result = (int*)calloc(S_len,sizeof(int));
+    for(int i = 0; i < S_len; i++)
+    {
+        result[i] = INT_MAX;
+    }
+    *returnSize = S_len;
+    //将S中的字符位置分别和C出现的位置作差，保留最短距离
+    for(int i = 0; i < S_len; i++)
+    {
+        for(int j = 0; j < place_index; j++)
+        {
+            result[i] = abs(i - C_place[j]) < result[i] ? abs(i - C_place[j]) : result[i];
+        }
+    }
+    return result;
+}
+/*
+这种解法就是最容易想到的方法，首先遍历S字符串，记录下C的位置；
+然后重新遍历字符串S，并计算S字符串中每个字符的位置与之前记录的C的位置的绝对距离，并保留最短的那个；
+最终得到的就是目标数组。
+*/
+int* shortestToChar(char* S, char C, int* returnSize) 
+{
+   int i,j;
+   i=j=0;
+   int len=strlen(S);
+   int *res=malloc(sizeof(int)*len);
+   *returnSize=len;   
+    
+   for(j=0;j<len;j++)
+   {
+      if(S[j]==C)
+          res[j]=0;
+      else
+          res[j]=len;
+    }
+    
+   for(j=1;j<len;j++)
+   {
+      if(res[j]>(res[j-1]+1))
+          res[j]=res[j-1]+1;
+   }
+   
+   for(j=len-2;j>=0;j--)
+   {
+      if(res[j]>(res[j+1]+1))
+          res[j]=res[j+1]+1;
+   }
+   
+   return res;   
+}
+/*
+这种解法是比较讨巧的做法，三次循环，目的各不相同：
+第一次循环，记录S中C的位置，并将结果数组中该位置的结果置为0，其余位置置为数组长度；
+第二次循环，左序遍历字符串，将结果数组中的值分别与其左侧位置的值+1进行比较，则可以得到左序情况下，所有字符离它左侧最近的C字符的距离；
+第三次循环，右序遍历字符串，将结果数组中的值分别与其右侧位置的值+1进行比较，则可以得到右序情况下，所有字符离它右侧最近的C字符的距离，
+并将该距离与上次循环得到的距离进行比较，取最小的那个距离。
+三次循环结束，即可得到每个字符与给定字符最短的距离数组。
+*/
