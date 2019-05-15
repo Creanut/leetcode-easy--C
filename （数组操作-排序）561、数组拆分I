@@ -1,0 +1,104 @@
+/*
+给定长度为 2n 的数组, 你的任务是将这些数分成 n 对, 例如 (a1, b1), (a2, b2), ..., (an, bn) ，使得从1 到 n 的 min(ai, bi) 总和最大。
+
+示例 1:
+
+输入: [1,4,3,2]
+
+输出: 4
+解释: n 等于 2, 最大总和为 4 = min(1, 2) + min(3, 4).
+提示:
+
+n 是正整数,范围在 [1, 10000].
+数组中的元素范围在 [-10000, 10000].
+*/
+
+int compare( const void *arg1, const void *arg2 ) 
+{
+    return *(int*)arg1-*(int*)arg2;
+}
+
+int arrayPairSum(int* nums, int numsSize) 
+{
+    qsort(nums,numsSize,sizeof(int),compare);
+    int sum = 0;
+    for(int i = 0; i < numsSize / 2; ++i)
+    {
+        sum = sum + nums[i*2];
+    }
+    return sum;
+}
+/*
+本题的思想就是先把所给的数组按照元素的大小进行升序排序，
+然后把处在0、2、4……这些偶数位置的元素进行累加即可。
+在本解答中，使用了C语言自带的快排函数qsort，其使用方法如下：
+函数原型为：
+void qsort(
+    void *base,
+    size_t nmemb,
+    size_t size,
+    int (*compar)(const void *, const void *)
+    );
+函数功能：qsort()函数的功能是对数组进行排序，数组有nmemb个元素，每个元素大小为size。
+
+参数base       - base指向数组的起始地址，通常该位置传入的是一个数组名
+参数nmemb  - nmemb表示该数组的元素个数
+参数size        - size表示该数组中每个元素的大小（字节数）
+参数(*compar)(const void *, const void *) - 此为指向比较函数的函数指针，决定了排序的顺序。
+
+函数返回值：无
+
+注意：如果两个元素的值是相同的，那么它们的前后顺序是不确定的。也就是说qsort()是一个不稳定的排序算法。
+ 
+其中compar参数的解释如下：
+compar参数指向一个比较两个元素的函数，比较函数的原型应该像下面这样：
+int compar(const void *p1, const void *p2);
+注意两个形参必须是const void *型，
+同时在调用compar 函数（compar实质为函数指针，这里称它所指向的函数也为compar）时，
+传入的实参也必须转换成const void *型。在compar函数内部会将const void *型转换成实际类型。
+如果compar返回值小于0（< 0），那么p1所指向元素会被排在p2所指向元素的前面
+如果compar返回值等于0（= 0），那么p1所指向元素与p2所指向元素的顺序不确定
+如果compar返回值大于0（> 0），那么p1所指向元素会被排在p2所指向元素的后面
+*/
+
+int arrayPairSum(int* nums, int numsSize) 
+{
+    int index = 0;
+    int sum = 0;
+    int* order_hash = (int*)calloc(20001,sizeof(int));
+    
+    for(int i = 0; i < numsSize; i++)
+    {
+        order_hash[nums[i]+10000]++;
+    }
+    
+    for(int i = 0; i < 20001; )
+    {
+        if(order_hash[i])
+        {
+            if(index % 2 == 0)
+            {
+                sum = sum + (i - 10000);
+            }
+            index++;
+            order_hash[i]--;
+        }
+        else
+            i++;
+    }
+    
+    return sum;
+}
+/*
+这种解法比较巧妙，可以认为是使用哈希表对所给数组中的元素进行了一次基数排序。
+由于题目限定了数组中元素的取值范围为[-10000,10000]，即最多有20001个取值，因此
+可以根据元素的取值和其在数组中出现的个数，映射到一个哈希表内。由于数组的下标不能为负，
+因此哈希表的value值可以取i+10000，对应的key值为数字i在数组中出现的个数。
+在一一映射到哈希表之后，下面进行哈希表的遍历：
+只有当哈希表对应的key值不为0时，才说明数字(i-10000)在原有的数组中，
+index记录的是该数字排序后的位置，只有index为偶数时，才会被累加到sum中，并且只有哈希表对应的key
+值不为0时，index才可以自加，由于原数组中同一个数字可能出现多次，即key值可能大于1，因此，
+只有当order_hash[i]自减到0时，哈希表索引下标才能继续向后面索引，即i++,
+这也是i++不放在for循环条件语句中的原因，只有当前所指的value值order_hash[i]自减到0的时候，
+i才继续自增，驱动向后索引哈希表。
+*/
