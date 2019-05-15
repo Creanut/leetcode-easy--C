@@ -71,6 +71,11 @@ int calPoints(char ** ops, int opsSize)
                 while(goals[j] == C_flag)
                     j--;
                 goals[i] += goals[j--];
+                /*
+                上句也可以写成：
+                goals[i] += goals[j];
+                j--;
+                */
                 while(goals[j] == C_flag)
                     j--;
                 goals[i] += goals[j];
@@ -86,3 +91,44 @@ int calPoints(char ** ops, int opsSize)
     free(goals);
     return sum;
 }
+
+/*
+这道题目的思路就是遍历二维字符串数组，根据当前字符串中的字符示意，来分别处理；
+定义goals数组记录第i个回合的得分情况，sum计算截至第i回合的总得分情况，C_flag为本回合没有有效得分的标志位。
+外层循环控制字符串的遍历，循环内部使用分支来判断操作符即可。
+首先分析题目，可以看出操作符C的处理最复杂，只有C出现的时候，本回合是没有有效得分的。
+
+C一旦出现，需要进行的动作是：
+1、本回合没有有效得分（goals[i] = C_flag）;
+2、得分指针指向上一个有效回合（有有效得分的回合）
+    j = i - 1;
+    while(goals[j] == C_flag)//直到找到有效的回合
+        j--;
+3、计算累加分（sum = sum - goals[j]）
+4、把上一个有效回合的得分置为无效（goals[j] = C_flag）
+
+D一旦出现，需要进行的动作是：
+1、得分指针指向上一个有效回合（有有效得分的回合）
+    j = i - 1;
+    while(goals[j] == C_flag)
+        j--;
+2、对上一个有效得分进行双倍操作赋值给本回合得分（goals[i] = goals[j] * 2）
+3、计算累加分（sum = sum + goals[i]）
+
++一旦出现，需要进行的操作是：
+1、得分指针指向上一个有效回合（有有效得分的回合）
+    j = i - 1;
+    while(goals[j] == C_flag)
+        j--;
+2、本次得分累加上一个有效得分，并将指针继续前移，寻找上上一次的有效回合
+    goals[i] += goals[j--];
+    while(goals[j] == C_flag)
+        j--;
+    (或者写成：goals[i] += goals[j]; j--;)
+3、在累加上一个有效得分的基础上，继续累加上上一次的有效得分（goals[i] += goals[j]）
+4、计算累加分（sum = sum + goals[i]）
+
+整数字符串出现，需要进行的操作是：
+1、将整数字符串转换为整数赋值给本回合的得分（goals[i] = atoi(ops[i])）
+2、计算累加分（sum = sum + goals[i]）
+*/
