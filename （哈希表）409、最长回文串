@@ -1,0 +1,56 @@
+/*
+给定一个包含大写字母和小写字母的字符串，找到通过这些字母构造成的最长的回文串。
+
+在构造过程中，请注意区分大小写。比如 "Aa" 不能当做一个回文字符串。
+
+注意:
+假设字符串的长度不会超过 1010。
+
+示例 1:
+
+输入:
+"abccccdd"
+
+输出:
+7
+
+解释:
+我们可以构造的最长的回文串是"dccaccd", 它的长度是 7。
+*/
+
+int longestPalindrome(char * s)
+{
+    int* s_hash = (int*)calloc(52,sizeof(int));
+    int s_len = strlen(s);
+    for(int i = 0; i < s_len; i++)
+    {
+        if(s[i] >= 'a' && s[i] <= 'z')
+            s_hash[s[i]-'a']++;
+        else if(s[i] >= 'A' && s[i] <= 'Z')
+           s_hash[s[i]-'A'+26]++;
+    }
+    int result = 0;
+    int odd_flag = 0;
+    for(int i = 0; i < 52; i++)
+    {
+        if(s_hash[i] % 2 == 0)
+            result = result + s_hash[i];
+        if(s_hash[i] % 2 != 0)
+        {
+            odd_flag = 1;
+            result = result + s_hash[i] - 1;
+        }
+    }
+    if(odd_flag == 1)
+        result = result + 1;
+    return result;
+}
+
+/*
+对于一个回文串，其长度有两种情况：
+1、长度为偶数，所有的字符均是对称出现；
+2、长度为奇数，对称出现的字符中间位置有一个单独出现的字符；
+所以，问题可以转化为统计所给字符串中偶数个字符的数量，如果出现奇数个字符，
+则统计该字符的最大偶数个字符，并且在最终的个数统计中，加上1表示有字符可以作为最中间的那个
+单独字符。
+*/
