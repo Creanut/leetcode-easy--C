@@ -1,0 +1,62 @@
+/*
+给定一个字符串 S，返回 “反转后的” 字符串，其中不是字母的字符都保留在原地，而所有字母的位置发生反转。
+
+ 
+
+示例 1：
+
+输入："ab-cd"
+输出："dc-ba"
+示例 2：
+
+输入："a-bC-dEf-ghIj"
+输出："j-Ih-gfE-dCba"
+示例 3：
+
+输入："Test1ng-Leet=code-Q!"
+输出："Qedo1ct-eeLg=ntse-T!"
+ 
+
+提示：
+
+S.length <= 100
+33 <= S[i].ASCIIcode <= 122 
+S 中不包含 \ or "
+*/
+
+char * reverseOnlyLetters(char * S)
+{
+    int left = 0;
+    int right = strlen(S) - 1;
+    char tmp;
+    
+    while( left < right )
+    {
+        //左指针指的是字母，右指针指的也是字母
+        if( ((S[left] >= 'a' && S[left] <= 'z') || (S[left] >= 'A' && S[left] <= 'Z')) && ((S[right] >= 'a' && S[right] <= 'z') || (S[right] >= 'A' && S[right] <= 'Z')) )
+        {
+            tmp = S[left];
+            S[left] = S[right];
+            S[right] = tmp;
+            left++;
+            right--;
+            continue;
+        }
+        //左指针指的不是字母（1、左指针指的是非字母字符，右指针指的是字母；2、左指针指的是非字母字符，右指针指的也是非字母字符）
+        if( !((S[left] >= 'a' && S[left] <= 'z') || (S[left] >= 'A' && S[left] <= 'Z')) )
+        {
+            left++;
+        }
+        //右指针指的不是字母（1、右指针指的是非字母字符，左指针指的是字母；2、右指针指的是非字母字符，左指针指的也是非字母字符）
+        if( !((S[right] >= 'a' && S[right] <= 'z') || (S[right] >= 'A' && S[right] <= 'Z')) )
+        {
+            right--;
+        }
+    }
+    
+    return S;
+}
+
+/*
+典型的双指针操作题目。
+*/
