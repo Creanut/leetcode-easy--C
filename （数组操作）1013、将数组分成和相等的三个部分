@@ -1,0 +1,103 @@
+/*
+给定一个整数数组 A，只有我们可以将其划分为三个和相等的非空部分时才返回 true，否则返回 false。
+形式上，如果我们可以找出索引 i+1 < j 且满足 
+(A[0] + A[1] + ... + A[i] == A[i+1] + A[i+2] + ... + A[j-1] == A[j] + A[j-1] + ... + A[A.length - 1]) 
+就可以将数组三等分。
+ 
+示例 1：
+输出：[0,2,1,-6,6,-7,9,1,2,0,1]
+输出：true
+解释：0 + 2 + 1 = -6 + 6 - 7 + 9 + 1 = 2 + 0 + 1
+示例 2：
+输入：[0,2,1,-6,6,7,9,-1,2,0,1]
+输出：false
+示例 3：
+输入：[3,3,6,5,-2,2,5,1,-9,4]
+输出：true
+解释：3 + 3 = 6 = 5 - 2 + 2 + 5 + 1 - 9 + 4
+ 
+提示：
+3 <= A.length <= 50000
+-10000 <= A[i] <= 10000
+*/
+
+//左右开弓，从两头计算第一部分和第三部分
+bool canThreePartsEqualSum(int* A, int ASize)
+{
+    int total_sum = 0;
+    int part_sum = 0;
+    for(int i = 0; i < ASize; i++)
+    {
+        total_sum = total_sum + A[i];
+    }
+    if(total_sum % 3 != 0)
+        return false;
+    
+    int left = 0;
+    int right = ASize - 1;
+    int part1_sum = 0;
+    int part3_sum = 0;
+    while(left < right)
+    {
+        if(part1_sum != total_sum / 3)
+        {
+            part1_sum = part1_sum + A[left++];
+        }
+        if(part3_sum != total_sum / 3)
+        {
+            part3_sum = part3_sum + A[right--];
+        }
+        if(part1_sum == part3_sum && part1_sum == total_sum / 3)
+            return true;
+    }
+    return false;
+}
+/*
+基本思路是：
+对于能够分成和相等的三部分的数组，其每一部分的和必定是数组元素总和的1/3，
+所以如果数组元素的总和不是3的倍数，则其必定不能被等分成三份。
+对于元素综合是3的倍数的数组，定义左右指针分别计算第一部分和第三部分的和。
+如果第一部分的和达到了总和的1/3，并且第三部分的和也达到了总和的1/3，并且此时
+左指针left<右指针right，说明第二部分必定不是空值，此时满足题目要求，返回true，
+如果遍历计算过程中不满足以上条件，返回false。
+这里需要注意的是，判断第一部分和第三部分的和是否相等且是否达到了总和的1/3，
+这一过程要在while循环中进行。
+*/
+
+//单侧计算，对满足题目要求的part进行计数。
+bool canThreePartsEqualSum(int* A, int ASize) 
+{
+    if( ASize < 3 )
+        return false;
+    int i,sum = 0,count = 0;
+    for( i = 0; i < ASize; i++ )
+    {
+        sum += A[i];
+    }
+    if( sum % 3 != 0 )
+        return false;
+    
+    int partsum = sum / 3;
+    i = 0;
+    int cursum = 0;
+    while( i < ASize )
+    {
+        while( cursum != partsum && i < ASize )
+        {
+            cursum += A[i];
+            i++;
+        }
+        count++;
+        if( count == 2 && i < ASize )
+            return true;
+        cursum = 0;
+    }
+    
+    return false;
+}
+/*
+只从左侧开始进行数组元素的累加，边累加边判断当前累加的结果是否积累到了
+总和的1/3，如果到了，说明第一部分累加完成，part计数值count自增，
+当前累加结果清零。如果part计数值count自增到2，且i<ASize，则说明已经
+完成了两部分的累加，并且第三部分不是空值（尚有剩余元素），满足条件，返回true。
+*/
