@@ -36,7 +36,7 @@ char * toGoatLatin(char * S){
     char * r = malloc(11250);
     memset(r, 0, 11250);
     int idx = 0;
-	  int len = strlen(S);
+    int len = strlen(S);
     for(int i = 0; i <= len; i++, S++)
     {
         if( (*S == ' ') || (*S == '\0') )
