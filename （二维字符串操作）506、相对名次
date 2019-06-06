@@ -1,0 +1,66 @@
+/*
+给出 N 名运动员的成绩，找出他们的相对名次并授予前三名对应的奖牌。前三名运动员将会被分别授予 “金牌”，“银牌” 和“ 铜牌”（"Gold Medal", "Silver Medal", "Bronze Medal"）。
+
+(注：分数越高的选手，排名越靠前。)
+
+示例 1:
+
+输入: [5, 4, 3, 2, 1]
+输出: ["Gold Medal", "Silver Medal", "Bronze Medal", "4", "5"]
+解释: 前三名运动员的成绩为前三高的，因此将会分别被授予 “金牌”，“银牌”和“铜牌” ("Gold Medal", "Silver Medal" and "Bronze Medal").
+余下的两名运动员，我们只需要通过他们的成绩计算将其相对名次即可。
+
+提示:
+
+    N 是一个正整数并且不会超过 10000。
+    所有运动员的成绩都不相同。
+*/
+
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int compare(const void* a,const void* b)
+{
+    return *(int*)b - *((int*)a);
+}
+
+char** findRelativeRanks(int* nums, int numsSize, int* returnSize) 
+{
+    char** result = (char**)malloc(sizeof(char*) * numsSize);
+    int hash[1000000] = {0};
+    *returnSize = numsSize;
+    
+    for(int i = 0; i < numsSize; i++)
+    {
+        result[i] = (char*)malloc(sizeof(char) * 13);
+        hash[nums[i]] = i;//记录原成绩在原数组nums中的下标，因为返回的result要以原数组的顺序进行返回。
+    }
+    
+    qsort(nums, numsSize, sizeof(int), compare);
+    
+    for(int i = 0; i < numsSize; i++)
+    {
+        if(i == 0)
+            result[hash[nums[0]]] = "Gold Medal";
+        else if(i == 1)
+            result[hash[nums[1]]] = "Silver Medal";
+        else if(i == 2)
+            result[hash[nums[2]]] = "Bronze Medal";
+        else
+            sprintf(result[hash[nums[i]]], "%d", i+1);
+    }
+    
+    return result;
+}
+
+/*
+计算步骤：
+1、遍历数组，记录原成绩在数组中的位置（hash表中的key值为成绩，value值为成绩在nums数组中的位置）；
+2、对原成绩数组进行排序（降序）；
+3、遍历排序后的数组，根据排序后的成绩和hash表，索引该成绩在nums中的位置，并以此位置为作为result的下标，
+对result进行赋值，前三位赋值对应的字符串，后面依次赋值对应的位次即可。
+
+这里对hash表初始化多大的空间？不知道，因为题目中并未指出运动员成绩的最大值，理论上hash表大小
+为成绩的最大值即可。
+*/
