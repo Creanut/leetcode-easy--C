@@ -1,0 +1,91 @@
+/*
+给定一个字符串来代表一个学生的出勤记录，这个记录仅包含以下三个字符：
+
+    'A' : Absent，缺勤
+    'L' : Late，迟到
+    'P' : Present，到场
+
+如果一个学生的出勤记录中不超过一个'A'(缺勤)并且不超过两个连续的'L'(迟到),那么这个学生会被奖赏。
+
+你需要根据这个学生的出勤记录判断他是否会被奖赏。
+
+示例 1:
+
+输入: "PPALLP"
+输出: True
+
+示例 2:
+
+输入: "PPALLL"
+输出: False
+*/
+
+bool checkRecord(char * s)
+{   
+    int A_num = 0;
+    int LL_flag = 0;
+    int s_len = strlen(s);
+    char* new_s = (char*)malloc((s_len + 3) * sizeof(char));
+    new_s[0] = 'P';
+    new_s[1] = '\0';
+    strcat(new_s,s);
+    new_s[s_len+1] = 'P';
+    new_s[s_len+2] = '\0';
+    
+    for(int i = 1; i < s_len + 2; i++)
+    {
+        if(new_s[i] == 'A')
+            A_num++;
+        if(new_s[i] == 'L' && new_s[i-1] == 'L' && new_s[i+1] == 'L')
+            LL_flag = 1;
+    }
+    
+    return (A_num <= 1 && LL_flag == 0) ? true : false;
+}
+/*
+这种使用的是防御式编程的思想：
+从题目来看，判断连续L的个数是否超过2是一个需要考虑数组的边界条件的问题，
+如果不使用防御式编程，单独考虑首字符和尾字符会非常麻烦，因为需要考虑首字符和
+尾字符是否会与其后和其前的字符构成连续的L。使用防御式编程的思想，就是
+在给定字符串的基础上进行拓展，避开边界问题的判断。所以，这里可以在原字符串
+的基础上，在首尾分别加上不影响判断结果的字符“P”，这样拓展后的字符串
+可以从i=1开始遍历，并且遍历的循环体中出现字符串数组下标为i-1和i+1时也不会
+出现数组越界的情况，这样便不用单独考虑边界问题了。
+*/
+
+
+bool checkRecord(char * s)
+{
+    int A_num = 0;
+    int L_num = 0;
+    int s_len = strlen(s);
+    
+    for(int i = 0; i < s_len; i++)
+    {
+        if(s[i] == 'A')
+        {
+            A_num++;
+            L_num = 0;
+            if(A_num > 1)
+                return false;
+        }
+        else if(s[i] == 'L')
+        {
+            L_num++;
+            if(L_num > 2)
+                return false;
+        }
+        else 
+            L_num = 0;
+    }
+    
+    return true;
+}
+/*
+这种方法就是单纯地在遍历字符串的过程中记录缺勤“A”的次数和是否出现2个以上的连续“L”，
+对于前者，单纯计数累加即可，对于后者可以认为：
+如果出现了L，计数累加；
+如果出现了A说明打破了连续L的情况，L计数清零；
+如果出现了P说明打破了连续L的情况，L计数清零；
+所以，只需要在L的计数累加后立即判断此时L累加计数的个数是否超过2即可。
+*/
