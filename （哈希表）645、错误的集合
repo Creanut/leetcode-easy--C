@@ -1,0 +1,49 @@
+/*
+集合 S 包含从1到 n 的整数。不幸的是，因为数据错误，导致集合里面某一个元素复制了成了集合里面的另外一个元素的值，导致集合丢失了一个整数并且有一个元素重复。
+
+给定一个数组 nums 代表了集合 S 发生错误后的结果。你的任务是首先寻找到重复出现的整数，再找到丢失的整数，将它们以数组的形式返回。
+
+示例 1:
+
+输入: nums = [1,2,2,4]
+输出: [2,3]
+
+注意:
+
+    给定数组的长度范围是 [2, 10000]。
+    给定的数组是无序的。
+*/
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* findErrorNums(int* nums, int numsSize, int* returnSize)
+{
+    int* hash = (int*)calloc(numsSize+1, sizeof(int));
+    *returnSize = 2;
+    int* result = (int*)malloc(*returnSize * sizeof(int));
+    
+    for(int i = 0; i < numsSize; i++)
+    {
+        hash[nums[i]]++;
+    }
+    for(int i = 1; i < numsSize+1; i++)
+    {
+        if(hash[i] == 2)
+            result[0] = i;
+        if(hash[i] == 0)
+            result[1] = i;
+    }
+    return result;
+}
+
+/*
+这道题的思路很简单。
+利用哈希表对所给的数组元素构造字典，其中key值为元素值，value值为该元素出现的次数。
+然后遍历哈希表，如果value值为2，则说明其对应的key即为重复的数字；
+如果value值为0，则说明其对应的key值即为缺失的数字;
+这里在给哈希表分配内存的时候比给定的数组元素个数大1，是因为给定的元素是从1到n，
+其映射到哈希表的时候也是从下标1开始到下标n，但是由于哈希表是一个数组，其起始下标
+是从0开始的，因此，为保证所有的key值都能有映射空间，所以人为将0下标置空，在遍历
+哈希表的时候从下标为1的位置开始遍历即可，人为空出下标为0的元素。
+*/
