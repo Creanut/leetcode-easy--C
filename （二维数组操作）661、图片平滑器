@@ -1,0 +1,120 @@
+/*
+包含整数的二维矩阵 M 表示一个图片的灰度。你需要设计一个平滑器来让每一个单元的灰度成为平均灰度 (向下舍入) ，平均灰度的计算是周围的8个单元和它本身的值求平均，如果周围的单元格不足八个，则尽可能多的利用它们。
+
+示例 1:
+
+输入:
+[[1,1,1],
+ [1,0,1],
+ [1,1,1]]
+输出:
+[[0, 0, 0],
+ [0, 0, 0],
+ [0, 0, 0]]
+解释:
+对于点 (0,0), (0,2), (2,0), (2,2): 平均(3/4) = 平均(0.75) = 0
+对于点 (0,1), (1,0), (1,2), (2,1): 平均(5/6) = 平均(0.83333333) = 0
+对于点 (1,1): 平均(8/9) = 平均(0.88888889) = 0
+
+注意:
+
+    给定矩阵中的整数范围为 [0, 255]。
+    矩阵的长和宽的范围均为 [1, 150]。
+*/
+
+/**
+ * Return an array of arrays of size *returnSize.
+ * The sizes of the arrays are returned as *returnColumnSizes array.
+ * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+ */
+int** imageSmoother(int** M, int MSize, int* MColSize, int* returnSize, int** returnColumnSizes)
+{
+    *returnSize = MSize;
+    **returnColumnSizes = *MColSize;
+    int** average = (int**)malloc(MSize * sizeof(int*));
+    for(int i = 0; i < MSize; i++)
+    {
+        average[i] = (int*)malloc(*MColSize * sizeof(int));
+    }
+    
+    for(int i = 0; i < MSize; i++)
+    {
+        for(int j = 0; j < *MColSize; j++)
+        {
+            int sum = 0;
+            int cnt = 1;
+            sum = sum + M[i][j];
+            if(i - 1 >= 0)//up
+            {
+                sum = sum + M[i-1][j];
+                cnt++;
+            }
+            if(i + 1 < MSize)//down
+            {
+                sum = sum + M[i+1][j];
+                cnt++;
+            }
+            if(j - 1 >= 0)//left
+            {
+                sum = sum + M[i][j-1];
+                cnt++;
+            }
+            if(j + 1 < *MColSize)//right
+            {
+                sum = sum + M[i][j+1];
+                cnt++;
+            }
+            if(i - 1 >= 0 && j - 1 >= 0)//up-left
+            {
+                sum = sum + M[i-1][j-1];
+                cnt++;
+            }
+            if(i - 1 >= 0 && j + 1 < *MColSize)//up-right
+            {
+                sum = sum + M[i-1][j+1];
+                cnt++;
+            }
+            if(i + 1 < MSize && j - 1 >= 0)//down-left
+            {
+                sum = sum + M[i+1][j-1];
+                cnt++;
+            }
+            if(i + 1 < MSize && j + 1 < *MColSize)//down-right
+            {
+                sum = sum + M[i+1][j+1];
+                cnt++;
+            }
+            
+            average[i][j] = sum / cnt;
+        }
+    }
+    
+    return average;
+}
+
+/*
+本题按照题目要求使用暴力解法即可。
+输出的最终结果是一个与原数组大小相同的二维数组，所以需要先分配二维数组空间。
+在依次遍历二维数组中的元素的同时，分别查看该元素的
+左、右、上、下、左上、右上、左下、右下
+8个方向是否有元素，如果有元素，则在该元素的基础上累加这些元素，并对元素个数进行计数。
+最终计算累加和的均值作为平滑后的结果存入输出数组即可。
+在判断8个方向的元素时，也可按照下述方法判断元素是否存在，并进行最大程度的累加：
+for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            let sum = 0, count = 0
+            // m n 的范围判断 精髓
+            //行边界的判断，取0时到达上界，取rows - 1时到达下界
+            for (let m = Math.max(0, i - 1); m <= Math.min(rows - 1, i + 1); m++) {
+            //列边界的判断，取0时到达左边界，取cols - 1时到达右边界
+                for (let n = Math.max(0, j - 1); n <= Math.min(cols - 1, j + 1); n++) {
+                    sum += M[m][n]
+                    count++
+                }
+            }
+            res[i][j] = Math.floor(sum / count)
+        }
+    }
+    
+ 值得注意的是，这种方法在图像平滑中十分常用，图像的卷积核运算也类似。
+*/
