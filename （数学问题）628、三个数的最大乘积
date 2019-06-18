@@ -1,0 +1,42 @@
+/*
+给定一个整型数组，在数组中找出由三个数组成的最大乘积，并输出这个乘积。
+
+示例 1:
+
+输入: [1,2,3]
+输出: 6
+
+示例 2:
+
+输入: [1,2,3,4]
+输出: 24
+
+注意:
+
+    给定的整型数组长度范围是[3,104]，数组中所有的元素范围是[-1000, 1000]。
+    输入的数组中任意三个数的乘积不会超出32位有符号整数的范围。
+*/
+
+int cmp(const void* a, const void* b)
+{
+    return *(int*)a - *(int*)b;
+}
+int maximumProduct(int* nums, int numsSize)
+{
+    int multi_result1, multi_result2;
+    qsort(nums, numsSize, sizeof(int), cmp);
+    
+    multi_result1 = nums[numsSize-1] * nums[numsSize-2] * nums[numsSize-3];
+    multi_result2 = nums[0] * nums[1] * nums[numsSize-1];
+    
+    return multi_result1 > multi_result2 ? multi_result1 : multi_result2;
+}
+
+/*
+三个数的最大乘积会出现以下情况：
+对所给数组排序后：
+1、所有元素都是正数，则最大乘积是排序后的前三位的乘积；
+2、所有元素都是负数，则最大乘积是排序后的最小的两位数的乘积*最大的一位数，因为最小的两个负数
+相乘可以得到一个最大的正数，再乘以一个最大的负数，得到的就是最大的乘积；
+3、有正数、有负数，则选1、2中的最大的那个数。
+*/
