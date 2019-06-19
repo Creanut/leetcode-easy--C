@@ -1,0 +1,88 @@
+/*
+有两种特殊字符。第一种字符可以用一比特0来表示。第二种字符可以用两比特(10 或 11)来表示。
+
+现给一个由若干比特组成的字符串。问最后一个字符是否必定为一个一比特字符。给定的字符串总是由0结束。
+
+示例 1:
+
+输入: 
+bits = [1, 0, 0]
+输出: True
+解释: 
+唯一的编码方式是一个两比特字符和一个一比特字符。所以最后一个字符是一比特字符。
+
+示例 2:
+
+输入: 
+bits = [1, 1, 1, 0]
+输出: False
+解释: 
+唯一的编码方式是两比特字符和两比特字符。所以最后一个字符不是一比特字符。
+
+注意:
+
+    1 <= len(bits) <= 1000.
+    bits[i] 总是0 或 1.
+*/
+
+bool isOneBitCharacter(int* bits, int bitsSize)
+{
+    if(bitsSize == 1 && bits[0] == 0)
+        return true;
+    if(bits[bitsSize-1] == 1)
+        return false;
+    else
+    {
+        if(bits[bitsSize-2] == 0)
+            return true;
+        else
+        {
+            int cnt = 0;
+            int i = 0;
+            while(bitsSize - 2 - i >= 0)
+            {
+                if(bits[bitsSize-2-i] == 1)
+                    cnt++;
+                else
+                    break;
+                i++;
+            }
+   
+            if(cnt % 2 == 0)
+                return true;
+            else
+                return false;
+        }
+    }
+}
+
+/*
+依据编码规则，对编码字符串归纳如下：
+1、检查最后一位，如果是1，直接return False，如果是0，检查倒数第二位；
+2、倒数第二位是0 return True。
+3、倒数第二位不是0，检查0前有几个连续1，奇数个：False, 偶数个：True。
+*/
+
+bool isOneBitCharacter(int* bits, int bitsSize) 
+{
+    if(bitsSize == 1)
+        return true;
+    int i = 0;
+    while(i < bitsSize - 1)
+    {
+        if(bits[i] == 0)
+            i++;
+        else if(bits[i] == 1)
+            i = i + 2;
+    }
+    if(i == bitsSize)
+        return false;
+    return true;
+}
+
+/*
+1、最后一位为0才可能正确。
+2、排除1，如果只有一个数，则对。 
+3、排除1、2，从头数，由于1后面必须接0或1，所以遇到1则跳一位。
+如果能够跳到bitsSize-1，则说明符合，否则错误。
+*/
