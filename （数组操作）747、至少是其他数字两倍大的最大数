@@ -1,0 +1,84 @@
+/*
+在一个给定的数组nums中，总是存在一个最大元素 。
+
+查找数组中的最大元素是否至少是数组中每个其他数字的两倍。
+
+如果是，则返回最大元素的索引，否则返回-1。
+
+示例 1:
+
+输入: nums = [3, 6, 1, 0]
+输出: 1
+解释: 6是最大的整数, 对于数组中的其他整数,
+6大于数组中其他元素的两倍。6的索引是1, 所以我们返回1.
+
+ 
+
+示例 2:
+
+输入: nums = [1, 2, 3, 4]
+输出: -1
+解释: 4没有超过3的两倍大, 所以我们返回 -1.
+
+ 
+
+提示:
+
+    nums 的长度范围在[1, 50].
+    每个 nums[i] 的整数范围在 [0, 99].
+*/
+
+int dominantIndex(int* nums, int numsSize)
+{
+    int max = -1;
+    int max_index;
+    for(int i = 0; i < numsSize; i++)
+    {
+        if(nums[i] > max)
+        {
+            max = nums[i];
+            max_index = i;
+        }
+    }
+    for(int j = 0; j < numsSize; j++)
+    {
+        if(nums[j] != max && max < nums[j] * 2)
+            return -1;
+    }
+    return max_index;
+}
+
+/*
+这种解法为两次循环解法，第一次循环找到数组中最大的数max及其下标max_index,
+第二次循环则判断max是否是其他数字的至少两倍大，如果发现不满足条件的，直接返回
+-1，否则，返回记录的最大数字的下标max_index。
+*/
+
+int dominantIndex(int* nums, int numsSize){
+    int dex=-1,first=-1,second;
+    for(int i=0;i<numsSize;i++)
+    {
+        if(nums[i]>first)
+        {   
+            second=first;
+            first=nums[i];
+            dex=i;
+            
+        }
+        if(nums[i]<first&&nums[i]>second)
+        {
+            second=nums[i];
+        }
+    }
+    if(first>=2*second)
+        return dex;
+    else
+        return -1;
+}
+/*
+这种解法为一次循环法，
+将待解决的问题转换为数组中第一大数字first和第二大数字second之间的关系比较，
+如果first至少是second的两倍大小，则它一定也是其余数字的至少两倍大小，
+所以一边循环找到数组中的第一大的数字first和第二大的数字second，并比较它俩
+之间的大小关系即可。
+*/
