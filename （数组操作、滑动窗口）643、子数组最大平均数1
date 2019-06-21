@@ -1,0 +1,74 @@
+/*
+给定 n 个整数，找出平均数最大且长度为 k 的连续子数组，并输出该最大平均数。
+
+示例 1:
+
+输入: [1,12,-5,-6,50,3], k = 4
+输出: 12.75
+解释: 最大平均数 (12-5-6+50)/4 = 51/4 = 12.75
+
+ 
+
+注意:
+
+    1 <= k <= n <= 30,000。
+    所给数据范围 [-10,000，10,000]。
+*/
+
+double findMaxAverage(int* nums, int numsSize, int k)
+{
+    double average = 0;
+    double max_average = -10000;
+    
+    for(int i = 0; i <= numsSize - k; i++)
+    {
+        int offset = 0;
+        int sum = 0;
+        
+        while(offset < k)
+        {
+            sum = sum + nums[i+offset];
+            offset++;
+        }
+        average = (double)sum / k;
+        if(average > max_average)
+            max_average = average;
+    }
+    
+    return max_average;
+}
+
+/*
+采用滑动窗口的思路，计算区间内的平均值。
+这种方法是滑窗每前进一步，都要重新计算窗口内数据的平均值，
+这样会产生大量的重复计算，影响效率，在测试时会超时。
+*/
+
+#define MAX(a,b) a > b ? a : b
+double findMaxAverage(int* nums, int numsSize, int k)
+{
+    double average = 0;
+    double max_average = -10000;
+    int tmp_sum = 0;
+    
+    for(int i = 0; i < k; i++)
+        tmp_sum = tmp_sum + nums[i];
+    average = (double)tmp_sum / k;
+    max_average = MAX(average, max_average);
+    
+    for(int i = 1; i <= numsSize - k; i++)
+    {
+        tmp_sum = tmp_sum - nums[i-1] + nums[i+k-1];
+        average = (double)tmp_sum / k;
+        max_average = MAX(max_average, average);
+    }
+    
+    return max_average;
+}
+
+/*
+这种方法依然是滑窗的思想，但是避免了重复计算。
+当前滑窗内的数据总和tmp_sum是上一次滑窗内的总和-当前滑窗起始元素的
+左侧数据nums[i-1]+当前滑窗内的最后一个元素nums[i+k-1]，
+这样提高了计算效率，避免了重复计算。
+*/
