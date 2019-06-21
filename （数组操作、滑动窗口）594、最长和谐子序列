@@ -1,0 +1,55 @@
+/*
+和谐数组是指一个数组里元素的最大值和最小值之间的差别正好是1。
+
+现在，给定一个整数数组，你需要在所有可能的子序列中找到最长的和谐子序列的长度。
+
+示例 1:
+
+输入: [1,3,2,2,5,2,3,7]
+输出: 5
+原因: 最长的和谐数组是：[3,2,2,2,3].
+
+说明: 输入的数组长度最大不超过20,000.
+*/
+
+int cmp(const void *a,const void *b)
+{ 
+    return *(int*)a-*(int*)b; 
+} 
+
+int findLHS(int* nums, int numsSize)
+{
+    if(numsSize < 2) return 0;
+    qsort(nums, numsSize, sizeof(int), cmp);
+    int begin = 0;
+    int max_len = 0;
+    
+    for(int end = 0; end < numsSize; end++)
+    {
+        while(nums[end] - nums[begin] > 1)
+            begin++;
+        if(nums[end] - nums[begin] == 1)
+            max_len = max_len > end - begin + 1 ? max_len : end - begin + 1;
+    }
+    
+    return max_len;
+}
+
+/*
+这道题最开始的思路是这样的：
+定义一个哈希表，以nums[i]为key，以nums[i]对应的元素个数为value，遍历所有的元素填充哈希表，
+然后遍历哈希表，找到nums[j]-nums[i]=1的地方，将二者对应的value值进行累加，这里就是说明
+nums[i]和nums[j]可以构成一个和谐子序列，然后遍历哈希表找到所有满足此条件的值，并保留value
+的最大值即为所求。但是题目中没有限定nums[i]的范围，因此在C语言中无法构建一个可以动态变化
+的哈希表，这种思路在C语言下难以实现。
+
+遂第二种思路如下：
+首先对所给的数组进行升序排序，这样只需要维护一个窗口内的元素差值小于等于1的滑动窗口即可，
+由于数组有序，所以滑动窗口的范围大小只需判断窗口末端元素nums[end]和窗口首元素nums[begin]
+的差值关系，从而更新滑窗即可：
+1、如果end-begin>1说明begin指向过小，begin指针右移；
+2、如果end-begin=1，记录此时窗口的大小，并继续扩大窗口范围，end指针右移；
+3、如果end-begin=0，说明此时窗口内的所有元素相等，继续扩大窗口范围，寻找end-begin=1的位置，
+end指针右移。
+最终返回记录中的窗口最大值即为所求的结果。
+*/
