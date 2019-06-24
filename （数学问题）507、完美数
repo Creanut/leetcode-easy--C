@@ -1,0 +1,38 @@
+/*
+对于一个 正整数，如果它和除了它自身以外的所有正因子之和相等，我们称它为“完美数”。
+
+给定一个 正整数 n， 如果他是完美数，返回 True，否则返回 False
+
+ 
+
+示例：
+
+输入: 28
+输出: True
+解释: 28 = 1 + 2 + 4 + 7 + 14
+*/
+
+bool checkPerfectNumber(int num)
+{
+    int sum = 0;
+    int sqrt_num = sqrt(num);
+    
+    if(num <= 1)
+        return false;
+    
+    while(sqrt_num > 0)
+    {
+        if(num % sqrt_num == 0)
+            sum = sum + sqrt_num + num / sqrt_num;
+        sqrt_num--;
+    }    
+    
+    return num == sum - num;
+}
+
+/*
+思路很简单，就是找到num的所有因子，然后相加后判断因子之和是否和其本身相等。
+对于num的因子，从1开始遍历到num，则会超时，因此这里可以只遍历1到sqrt(num)，
+如果在遍历过程中找到了其因子，则用num除以该因子得到的结果也一定是num的因子，
+这样可以节约循环次数，提高计算效率。
+*/
