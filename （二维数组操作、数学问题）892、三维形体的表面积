@@ -1,0 +1,77 @@
+/*
+在 N * N 的网格上，我们放置一些 1 * 1 * 1  的立方体。
+
+每个值 v = grid[i][j] 表示 v 个正方体叠放在对应单元格 (i, j) 上。
+
+请你返回最终形体的表面积。
+
+ 
+
+示例 1：
+
+输入：[[2]]
+输出：10
+
+示例 2：
+
+输入：[[1,2],[3,4]]
+输出：34
+
+示例 3：
+
+输入：[[1,0],[0,2]]
+输出：16
+
+示例 4：
+
+输入：[[1,1,1],[1,0,1],[1,1,1]]
+输出：32
+
+示例 5：
+
+输入：[[2,2,2],[2,1,2],[2,2,2]]
+输出：46
+
+ 
+
+提示：
+
+    1 <= N <= 50
+    0 <= grid[i][j] <= 50
+*/
+
+#define MIN(a,b) ((a)>(b)?(b):(a))
+
+int surfaceArea(int** grid, int gridSize, int* gridColSize)
+{
+    int result = 0;
+    for(int i = 0; i < gridSize; i++)
+        for(int j = 0; j < *gridColSize; j++)
+            result = grid[i][j] ? result + 4 * grid[i][j] + 2 : result;
+    
+    for(int i = 0; i < gridSize; i++)
+        for(int j = 0; j < *gridColSize - 1; j++)
+            result = result - 2 * MIN(grid[i][j], grid[i][j+1]); 
+            
+    for(int i = 0; i < gridSize-1; i++)
+        for(int j = 0; j < *gridColSize; j++)
+            result = result - 2 * MIN(grid[i][j], grid[i+1][j]);        
+   
+    return result;
+}
+
+/*
+思路：
+第一个循环遍历所有格点，计算所有可能的表面积和（只考虑垂直叠加造成的上下面的遮挡）；
+第二循环，减去横向遮挡的表面积；
+第三个循环，减去纵向遮挡的表面积。
+
+本程序在排错时发现了一个容易忽略的点：
+带参数的宏定义格式为：
+#define 标识符(参数1,参数2,...,参数n) 替换列表
+说明：
+1) 标识符与参数表的左括号之间不能有空格，否则预处理器会把该宏理解为普通的无参宏定义，故以下是错误的带参宏定义形式。
+    #define MAX (a,b) ( (a) > (b) ? (a) : (b) ) //错误的带参宏定义格式
+2) 宏替换列表中每个参数及整个替换列表，都必须用一对小括号 () 括起来，否则可能会出现歧义，建议使用以下形式。
+    #define MIN(a,b) ((a)>(b)?(b):(a))
+*/
