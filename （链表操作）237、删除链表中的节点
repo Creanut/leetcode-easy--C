@@ -1,0 +1,76 @@
+/*
+请编写一个函数，使其可以删除某个链表中给定的（非末尾）节点，你将只被给定要求被删除的节点。
+
+现有一个链表 -- head = [4,5,1,9]
+
+示例 1:
+
+输入: head = [4,5,1,9], node = 5
+输出: [4,1,9]
+解释: 给定你链表中值为 5 的第二个节点，那么在调用了你的函数之后，该链表应变为 4 -> 1 -> 9.
+示例 2:
+
+输入: head = [4,5,1,9], node = 1
+输出: [4,5,9]
+解释: 给定你链表中值为 1 的第三个节点，那么在调用了你的函数之后，该链表应变为 4 -> 5 -> 9.
+ 
+
+说明:
+
+链表至少包含两个节点。
+链表中所有节点的值都是唯一的。
+给定的节点为非末尾节点并且一定是链表中的一个有效节点。
+不要从你的函数中返回任何结果。
+*/
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+
+void deleteNode(struct ListNode* node) 
+{
+    node->val = node->next->val;
+    node->next = node->next->next;
+}
+
+/*
+这道题和常规的删除链表中的元素解法不同。
+首先，这道题没有给出这个链表的头节点指针，也就是说，根据题目并不知道链表是从哪个
+地方开始的，这就导致，根据给定的待删除的节点node，并不能找到node的上一个节点，
+从而就不能使用常规方法来删除给定的节点node。但是由于给定的有当前节点，所以可以根据
+当前节点找到下一个节点，那么只需将原来的下一个节点的值val以及它的后继指针node->next->next
+赋值给当前节点，即使用后继节点覆盖掉当前节点，就能实现当前节点的删除。
+
+传统的删除节点的方法是：
+1、根据给定的头节点找到当前节点的前驱结点previous；
+2、修改前驱节点的后继节点的指针，使其指向当前节点的下一个节点；
+3、释放当前节点。
+
+//函数功能：寻找给定元素的前驱结点并返回。
+typedef struct ListNode* PtrToNode;
+typedef PtrToNode Position;
+typedef PtrToNode Node;
+
+Position FindPrevious(Node X, Node head)
+{
+    Position Previous;
+    Previous = head;
+    while(Previous->next != NULL && Previous->next->val != X)
+        Previous = Previous->next;
+    return Previous;
+}
+
+//函数功能：删除给定的节点
+void Delete(Node X, Node head)
+{
+    Position Previous;
+    Previous = FindPrevious(X, head);
+    
+    Previous->next = X->next;
+    free(X);
+}
+*/
