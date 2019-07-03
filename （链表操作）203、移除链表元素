@@ -1,0 +1,54 @@
+/*
+删除链表中等于给定值 val 的所有节点。
+
+示例:
+
+输入: 1->2->6->3->4->5->6, val = 6
+输出: 1->2->3->4->5
+*/
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+
+
+struct ListNode* removeElements(struct ListNode* head, int val)
+{
+    if(!head)
+        return NULL;
+    while(head->val == val)
+    {
+        head = head->next;
+        if(!head)
+            return NULL;
+    }
+    struct ListNode* previous = head;
+    struct ListNode* current = head->next;
+    while(current)
+    {
+        if(current->val == val)
+        {
+            previous->next = current->next;
+            current = previous->next;
+        }
+        else
+        {
+            previous = current;
+            current = current->next;
+        }
+    }
+    return head;
+}
+
+/*
+思路整理：
+1、如果链表为空链表（即头节点为空），则直接返回空；
+2、头节点不为空，但头节点的值为给定的待删除的值，则头节点后移；
+3、链表内部元素中，当前节点的值为给定的待删除的值，则修改当前节点的前驱元素
+的next指针，使其指向当前节点的后继元素，并移动当前节点到修改后的节点；
+4、若当前节点的值不是给定的待删除的值，则遍历节点按照链表顺序顺势后移。
+*/
