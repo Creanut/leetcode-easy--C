@@ -1,0 +1,73 @@
+/*
+反转一个单链表。
+
+示例:
+
+输入: 1->2->3->4->5->NULL
+输出: 5->4->3->2->1->NULL
+进阶:
+你可以迭代或递归地反转链表。你能否用两种方法解决这道题？
+
+*/
+
+//头插法（迭代法）
+struct ListNode* reverseList(struct ListNode* head)
+{
+    struct ListNode* previous = NULL;
+    struct ListNode* current = head;
+    while(current != NULL)
+    {
+        struct ListNode* tmp = current->next;
+        current->next = previous;
+        previous = current;
+        current = tmp;
+    }
+    return previous;
+}
+/*
+对于原链表，链表最后一个元素的指针指向的肯定是NULL，所以反转链表可以看作是以下过程：
+      1->2->3->4->5->NULL
+NULL<-1<-2<-3<-4<-5
+即，在原链表的头指针前添加一个空指针，并在后续元素中，顺势修改每个节点的next指针的
+指向，使得next指针都指向它的前驱元素previous，直到遍历到NULL，说明遍历到了原链表
+的最后一个节点，返回最后遍历的非空节点（即新链表的头节点）即可。
+
+根据以上思路，需要做的工作是：
+1、前插空节点NULL；
+2、定义临时节点，保存当前节点的后继节点current->next；
+3、修改当前节点的next指针指向，使其指向它的前驱节点previous；
+4、前驱节点后移到当前节点current，当前节点后移到后继节点tmp(curent->next)，
+开始下一轮的迭代。
+*/
+
+//递归法
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+
+
+struct ListNode* reverseList(struct ListNode* head)
+{    
+    if(head == NULL || head->next == NULL)
+        return head;
+    
+    struct ListNode* p = reverseList(head->next);
+    head->next->next = head;
+    head->next = NULL;
+    return p;
+}
+/*
+骚操作：
+递归版本稍微复杂一些，其关键在于反向工作。假设列表的其余部分已经被反转，现在我该如何反转它前面的部分？
+假设列表为：
+n1->n2->...->nk-1->nk->nk+1->...->nm->NULL
+若从节点nk+1到nm已经被反转，而我们正处在nk处，则当前链表结构如下：
+n1->n2->...->nk-1->nk->nk+1<-...<-nm
+此时，nk+1的上一个节点为nk，它的next指针指向的是nk+1，nk+1的下一个节点为nk+2，它的next指针指向的是nk+1，
+则此时我们希望nk+1的下一个节点指向nk，所以有nk.next.next = nk。
+需要小心的是，n1的下一个节点必须指向NULL，如果忽略了这一点，则链表中可能会产生循环。
+*/
