@@ -1,0 +1,50 @@
+/*
+有一堆石头，每块石头的重量都是正整数。
+
+每一回合，从中选出两块最重的石头，然后将它们一起粉碎。假设石头的重量分别为 x 和 y，且 x <= y。那么粉碎的可能结果如下：
+
+如果 x == y，那么两块石头都会被完全粉碎；
+如果 x != y，那么重量为 x 的石头将会完全粉碎，而重量为 y 的石头新重量为 y-x。
+最后，最多只会剩下一块石头。返回此石头的重量。如果没有石头剩下，就返回 0。
+
+ 
+
+提示：
+
+1 <= stones.length <= 30
+1 <= stones[i] <= 1000
+
+*/
+
+int cmp(const void* a, const void* b)
+{
+    return *(int*)a - *(int*)b;
+}
+
+int lastStoneWeight(int* stones, int stonesSize)
+{
+    int smashed_cnt = 0;
+    while(smashed_cnt != stonesSize && smashed_cnt != stonesSize - 1)
+    {
+        qsort(stones, stonesSize, sizeof(int), cmp);
+        if(stones[stonesSize-1] == stones[stonesSize-2])
+        {
+            stones[stonesSize-1] = 0;
+            stones[stonesSize-2] = 0;
+            smashed_cnt += 2;
+        }
+        else if(stones[stonesSize-1] > stones[stonesSize-2])
+        {
+            stones[stonesSize-1] = stones[stonesSize-1] - stones[stonesSize-2];
+            stones[stonesSize-2] = 0;
+            smashed_cnt += 1;
+        }
+    }
+    qsort(stones, stonesSize, sizeof(int), cmp);
+    return stones[stonesSize-1];
+}
+
+/*
+粉碎完石头后，对数组进行重新排序，直到最后所有石头都被粉碎或者仅剩一个石头时，
+返回排序后数组中的最大元素即可。
+*/
