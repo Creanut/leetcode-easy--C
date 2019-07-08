@@ -1,0 +1,66 @@
+/*
+请判断一个链表是否为回文链表。
+
+示例 1:
+
+输入: 1->2
+输出: false
+示例 2:
+
+输入: 1->2->2->1
+输出: true
+进阶：
+你能否用 O(n) 时间复杂度和 O(1) 空间复杂度解决此题？
+*/
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+
+struct ListNode* reverseList(struct ListNode* head)
+{
+    struct ListNode* previous = NULL;
+    struct ListNode* current = head;
+    while(current != NULL)
+    {
+        struct ListNode* tmp = current->next;
+        current->next = previous;
+        previous = current;
+        current = tmp;
+    }
+    return previous;
+}
+bool isPalindrome(struct ListNode* head)
+{
+    if(head == NULL || head->next == NULL)
+        return true;
+    struct ListNode* slow = head;
+    struct ListNode* fast = head;
+    while(fast != NULL && fast->next != NULL)
+    {
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+    struct ListNode* middle = reverseList(slow);
+    struct ListNode* front = head;
+    while(middle != NULL)
+    {
+        if(front->val != middle->val)
+            return false;
+        middle = middle->next;
+        front = front->next;
+    }
+    return true;
+}
+
+/*
+解题思路：
+1、使用快慢指针法找到链表的中间位置（如果是奇数个元素，中间位置为中心元素的后一个元素）；
+2、对以中间位置元素为起始节点的后半部分链表进行链表反转；
+3、将反转后的链表和前半部分链表进行逐个节点比较，如果出现节点对应值不相等的情况，则说明
+原链表不是镜像对称的，返回false。
+*/
