@@ -1,0 +1,55 @@
+/*
+给你一个有效的 IPv4 地址 address，返回这个 IP 地址的无效化版本。
+
+所谓无效化 IP 地址，其实就是用 "[.]" 代替了每个 "."。
+
+ 
+
+示例 1：
+
+输入：address = "1.1.1.1"
+输出："1[.]1[.]1[.]1"
+示例 2：
+
+输入：address = "255.100.50.0"
+输出："255[.]100[.]50[.]0"
+ 
+
+提示：
+
+给出的 address 是一个有效的 IPv4 地址
+*/
+
+char * defangIPaddr(char * address)
+{
+    int len = strlen(address);
+    int new_len = len + 7;
+    char* new_address = (char*)malloc(new_len * sizeof(char));
+    new_address[len+6] = '\0';
+    int index = 0;
+    for(int i = 0; i < len; i++)
+    {              
+        new_address[index] = address[i];
+        if(address[i] == '.')
+        {
+            new_address[index] = '[';
+            new_address[index+1] = '.';
+            new_address[index+2] = ']';
+            index = index + 2;
+        }
+        index++;
+    }
+    return new_address;
+}
+
+/*
+解题思路：
+流程化编程即可。
+1、由于给定的IP地址是有效的，一个有效的IP地址共有三个‘.’，所以无效化后，只需在原有的基础上
+多分配6个字符的空间用来存储三对‘[]’即可，加上字符产结束标志位，一共多分配7个字符位。
+2、对新分配的字符串进行按位赋值，i为原字符串的字符遍历指针，index为新字符串的字符遍历指针。
+如果在原字符串遍历中遇到‘.’，则将从当前开始的3个字符位赋值为‘[.]’，并且index指针后移两位。
+
+这里需要注意的是i指针和index指针的指向顺序，i指针对原字符串是按照字符顺序一个一个向后遍历的，
+index则需要根据i指向的内容按需赋值，并在赋值后计算指针移动后的位置。
+*/
