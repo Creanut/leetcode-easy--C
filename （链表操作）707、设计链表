@@ -1,0 +1,213 @@
+/*
+设计链表的实现。您可以选择使用单链表或双链表。单链表中的节点应该具有两个属性：val 和 next。val 是当前节点的值，next 是指向下一个节点的指针/引用。如果要使用双向链表，则还需要一个属性 prev 以指示链表中的上一个节点。假设链表中的所有节点都是 0-index 的。
+
+在链表类中实现这些功能：
+
+get(index)：获取链表中第 index 个节点的值。如果索引无效，则返回-1。
+addAtHead(val)：在链表的第一个元素之前添加一个值为 val 的节点。插入后，新节点将成为链表的第一个节点。
+addAtTail(val)：将值为 val 的节点追加到链表的最后一个元素。
+addAtIndex(index,val)：在链表中的第 index 个节点之前添加值为 val  的节点。如果 index 等于链表的长度，则该节点将附加到链表的末尾。如果 index 大于链表长度，则不会插入节点。
+deleteAtIndex(index)：如果索引 index 有效，则删除链表中的第 index 个节点。
+ 
+
+示例：
+
+MyLinkedList linkedList = new MyLinkedList();
+linkedList.addAtHead(1);
+linkedList.addAtTail(3);
+linkedList.addAtIndex(1,2);   //链表变为1-> 2-> 3
+linkedList.get(1);            //返回2
+linkedList.deleteAtIndex(1);  //现在链表是1-> 3
+linkedList.get(1);            //返回3
+ 
+
+提示：
+
+所有值都在 [1, 1000] 之内。
+操作次数将在  [1, 1000] 之内。
+请不要使用内置的 LinkedList 库。
+*/
+
+typedef struct MyLinkedList
+{
+	int val;
+	struct MyLinkedList * next;
+} MyLinkedList;
+
+/** Initialize your data structure here. */
+
+MyLinkedList* myLinkedListCreate() 
+{
+    MyLinkedList* head = (MyLinkedList*)malloc(sizeof(MyLinkedList));
+    head->next = NULL;
+    return head;
+}
+/*
+创建新的链表：
+1、分配链表大小的内存，一个节点的大小即可；
+2、新节点中的next指针指向空；
+3、返回节点指针。
+*/
+
+/** Get the value of the index-th node in the linked list. If the index is invalid, return -1. */
+int myLinkedListGet(MyLinkedList* obj, int index) 
+{
+    if (index < 0) 
+      return -1;
+    MyLinkedList* p = obj->next;
+    int i = 0;
+    if (p != NULL && index == 0)
+      return p->val;
+    while (p != NULL)
+    {
+      p = p->next;
+      i++;
+      if (i == index && p != NULL)
+        return p->val;
+    }
+    return -1;
+}
+/*
+索引链表中的第index个节点，返回该节点的val值：
+1、index不合法，直接返回-1；
+2、从给定的链表的头指针开始不断向后索引，
+当索引到给定的第index个节点的时候返回该节点的val值。
+*/
+
+/** Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list. */
+void myLinkedListAddAtHead(MyLinkedList* obj, int val) 
+{
+    MyLinkedList* head = obj;
+    MyLinkedList* p = head->next;
+    MyLinkedList* new_node = (MyLinkedList*)malloc(sizeof(MyLinkedList));
+    new_node->val = val;
+    new_node->next = p;
+    head->next = new_node;
+}
+/*
+在给定的链表的头部插入一个新节点：
+1、定义临时指针p指向head->next，即保存head->next的位置；
+2、定义一个空节点，并对空节点的val进行赋值；
+3、修改空节点的next指针指向之前保存的head->next；
+4、修改头节点的指向，使头节点的next指针指向new_node。
+*/
+
+/** Append a node of value val to the last element of the linked list. */
+void myLinkedListAddAtTail(MyLinkedList* obj, int val) 
+{
+    MyLinkedList* p = obj;
+    while (p->next != NULL)
+      p = p->next;
+    MyLinkedList* new_node = (MyLinkedList*)malloc(sizeof(MyLinkedList));
+    new_node->val = val;
+    new_node->next = NULL;
+    p->next = new_node;
+}
+/*
+在给定的链表的尾部插入一个新节点：
+1、遍历给定的链表，找到链表的最后一个节点（即next指针指向NULL的节点）；
+2、定义一个空节点，并对空节点的val进行赋值；
+3、修改空节点的next指针，使之指向NULL（因为新节点是新链表中的最后一个节点）；
+4、修改原链表中的最后一个节点的next指向，使之指向新节点，从而构建出新链表。
+*/
+
+/** Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted. */
+void myLinkedListAddAtIndex(MyLinkedList* obj, int index, int val) 
+{
+    int i = -1;
+    MyLinkedList* p = obj;
+    MyLinkedList* pre;
+    if (index <= 0)
+    {
+        myLinkedListAddAtHead(obj,val);
+    }
+    else
+    {
+        p = p->next;
+        while (p != NULL)
+        {
+            pre = p;
+            p = p->next;
+            i++;
+            if (i+1 == index)
+            {
+                MyLinkedList* new_node = (MyLinkedList*)malloc(sizeof(MyLinkedList));
+                new_node->val = val;
+                new_node->next = p;
+                pre->next = new_node;
+                return;
+            }
+      }
+      if (i+1 == index)
+          myLinkedListAddAtTail(obj, val);
+    }		
+}
+/*
+在第index个节点的前面插入一个新节点:
+1、如果给定的节点标号index<=0，则直接在链表的表头添加一个新节点；
+2、索引指针i从-1开始，从链表的头节点开始向后遍历，每遍历到一个非空节点，
+索引指针向后移动，并在移动之前记录遍历到的节点p到pre；
+3、当i+1==index，即下一个节点是给定的节点时，说明要在此处插入新的节点，
+此时：创建新节点，给新节点赋值，修改新节点的next指针指向下一个节点p，
+修改上一个节点pre的next指针指向新节点；
+4、如果给定的index超过链表中的节点个数，则新节点直接插入到原链表的末尾即可。
+*/
+
+/** Delete the index-th node in the linked list, if the index is valid. */
+void myLinkedListDeleteAtIndex(MyLinkedList* obj, int index) 
+{
+    MyLinkedList* p = obj->next;
+    MyLinkedList* pre,*temp;
+    int i = 0;
+    if (index == 0)
+    {
+        obj->next = p->next;
+        free(p);
+        return;
+    }
+    while (p != NULL)
+    {
+        pre = p;
+        p = p->next;
+        i++;
+        if (i == index)
+        {
+            if (p != NULL && p->next != NULL)
+            {
+                temp = p;
+                p = p->next;
+                pre->next = p;
+                free(temp);
+                return;
+            }
+            else
+            {
+                pre->next = NULL;
+                free(p);
+                break;
+            }
+        }
+    }
+}
+/*
+删除链表中给定的节点：
+1、如果是头节点，将头节点的next指针直接后移即可；
+2、如果是普通节点：修改前一节点的next指针指向给定节点的后一个节点；
+3、如果是尾节点，将尾节点的前一节点的next指针指向NULL使之变为尾节点即可。
+*/
+
+void myLinkedListFree(MyLinkedList* obj) 
+{
+    MyLinkedList* p = obj;
+    MyLinkedList* pre;
+    while (p != NULL)
+    {
+        pre = p;
+        p = p->next;
+        free(pre);
+    }
+}
+/*
+ 删除链表：
+ 将链表的头节点删除即可。
+*/
